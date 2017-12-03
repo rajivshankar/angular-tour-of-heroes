@@ -54,6 +54,24 @@ export class HeroService {
     this.messageService.add('HeroService: ' + message);
   }
 
+  /** POST: add a new hero to the server */
+  addHero (hero: Hero) :Observable<Hero> {
+    return this.http.post<Hero>(this.heroesUrl, hero, httpOptions). pipe(
+      tap(_ => this.log(`added hero w/ id=${hero.id}`)),
+      catchError(this.handleError<Hero>("addHero"))
+    );
+  }
+
+  deleteHero (hero: Hero|number) : Observable<Hero> {
+    const id = typeof(hero) === 'number' ? hero: hero.id;
+    const url = `${this.heroesUrl}/${id}`;
+
+    return this.http.delete<Hero>(url, httpOptions).pipe (
+      tap(_ => this.log(`Deleted Hero id ${id}`)),
+      catchError(this.handleError<Hero>("Delete Hero"))
+    ); 
+  }
+
   /**
   * Handle Http operation that failed.
   * Let the app continue.
